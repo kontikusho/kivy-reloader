@@ -6,7 +6,7 @@ import importlib
 import subprocess
 import sys
 
-import trio
+import anyio
 from kivy.base import async_runTouchApp
 from kivy.core.window import Window
 from kivy.factory import Factory as F
@@ -192,8 +192,8 @@ if platform != "android":
 
             self.dispatch("on_start")
 
-        async def async_run(self, async_lib="trio"):
-            async with trio.open_nursery() as nursery:
+        async def async_run(self, async_lib=None):
+            async with anyio.create_task_group() as nursery:
                 Logger.info("Reloader: Starting Async Kivy app")
                 self.nursery = nursery
                 self._run_prepare()
@@ -512,8 +512,8 @@ else:
 
             Window.bind(on_keyboard=_on_keyboard)
 
-        async def async_run(self, async_lib="trio"):
-            async with trio.open_nursery() as nursery:
+        async def async_run(self, async_lib=None):
+            async with anyio.create_task_group() as nursery:
                 Logger.info("Reloader: Starting Async Kivy app")
                 self.nursery = nursery
                 self.initialize_server()
@@ -773,7 +773,8 @@ else:
                 IP = self.s.getsockname()[0]
                 Logger.info(f"Smartphone IP: {IP}")
 
-                await trio.serve_tcp(self.data_receiver, PORT)
+                listener = await anyio.create_tcp_listener(local_port=PORT)
+                await listener.serve(self.data_receiver, task_group=self.nursery)
             except Exception as e:
                 Logger.info(
                     "It was not possible to start the server, check if the phone is connected to the same network as the computer"

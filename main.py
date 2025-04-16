@@ -1,7 +1,7 @@
-import trio
+import anyio
 
 from beautifulapp import MainApp
 
 app = MainApp()
 
-trio.run(app.async_run, "trio")
+anyio.run(app.async_run)

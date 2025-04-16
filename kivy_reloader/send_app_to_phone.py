@@ -1,4 +1,4 @@
-import trio
+import anyio
 from colorama import Fore, Style, init
 
 from kivy_reloader.config import config
@@ -14,8 +14,8 @@ async def connect_to_server(IP):
     try:
         PORT = 8050
         print(f"Connecting to IP: {green}{IP}{white} and PORT: {green}{config.PORT}")
-        with trio.move_on_after(1):
-            client_socket = await trio.open_tcp_stream(IP, PORT)
+        with anyio.move_on_after(1):
+            client_socket = await anyio.connect_tcp(IP, PORT)
             return client_socket
     except Exception as e:
         print(f"{red}Error: {e}")
@@ -39,11 +39,11 @@ async def send_app():
         ) as myzip:
             for chunk in iter(lambda: myzip.read(CHUNK_SIZE), b""):
                 print("Sending chunk")
-                await client_socket.send_all(chunk)
+                await client_socket.send(chunk)
         print(green + "Finished sending app!")
     print("\n")
     print(yellow + f"Sent app to {len(config.PHONE_IPS)} smartphone(s)")
     print("*" * 50)
 
 
-trio.run(send_app)
+anyio.run(send_app)
