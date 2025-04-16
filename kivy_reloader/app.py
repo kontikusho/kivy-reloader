@@ -7,7 +7,7 @@ import subprocess
 import sys
 
 import anyio
-from kivy.base import async_runTouchApp
+from kivy.base import ExceptionManager, async_runTouchApp
 from kivy.core.window import Window
 from kivy.factory import Factory as F
 from kivy.lang import Builder
@@ -51,7 +51,7 @@ if platform != "android":
     from fnmatch import fnmatch
     from shutil import copytree, ignore_patterns, rmtree
 
-    from kaki.app import App
+    from kaki.app import App, E
     from kivy.clock import Clock, mainthread
     from kivy.core.window import Window
 
@@ -59,6 +59,7 @@ if platform != "android":
 
     Window.always_on_top = True
     logging.getLogger("watchdog").setLevel(logging.ERROR)
+    ExceptionManager.handlers = [h for h in ExceptionManager.handlers if not isinstance(h, E)]
 
     # Desktop BaseApp
     class App(App):
