@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 os.environ["KIVY_LOG_MODE"] = "MIXED"
@@ -194,6 +195,12 @@ if platform != "android":
             self.dispatch("on_start")
 
         async def async_run(self, async_lib=None):
+            if async_lib == None:
+                if anyio.get_cancelled_exc_class() == asyncio.CancelledError:
+                    async_lib = "anyio"
+                else:
+                    async_lib = "trio"
+
             async with anyio.create_task_group() as nursery:
                 Logger.info("Reloader: Starting Async Kivy app")
                 self.nursery = nursery
