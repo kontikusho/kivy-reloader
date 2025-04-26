@@ -4,6 +4,8 @@ This project is based on [kivy-school/kivy-reloader](https://github.com/kivy-sch
 
 Original code is licensed under the MIT License. See LICENSE for details.
 
+anyioを使用し、asyncio、trioどっちにでも動作するようにしたやつです
+
 <p align="center">
   <a href="https://www.youtube.com/watch?v=WLAI01e-8OQ">
     <img src="https://img.youtube.com/vi/WLAI01e-8OQ/hqdefault.jpg" alt="Kivy Reloader Showcase" style="max-width: 100%; width: 90%; height: auto;">
