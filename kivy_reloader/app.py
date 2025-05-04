@@ -521,6 +521,12 @@ else:
             Window.bind(on_keyboard=_on_keyboard)
 
         async def async_run(self, async_lib=None):
+            if async_lib == None:
+                if anyio.get_cancelled_exc_class() == asyncio.CancelledError:
+                    async_lib = "anyio"
+                else:
+                    async_lib = "trio"
+
             async with anyio.create_task_group() as nursery:
                 Logger.info("Reloader: Starting Async Kivy app")
                 self.nursery = nursery
